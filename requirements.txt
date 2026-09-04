@@ -1,0 +1,50 @@
+# Complaint Intelligence Platform — pinned dependencies
+# Install with: pip install -r requirements.txt
+#
+# NOTE ON PINS: versions below were the latest resolvable set at build time
+# (Sept 2026) in an environment restricted to PyPI only (no extra index
+# urls reachable). If you're installing on a machine with full internet
+# access, these will resolve fine; on Colab, the notebook in notebooks/
+# installs its own compatible subset.
+
+# --- Core data / ML ---
+pandas==2.3.3
+numpy==2.4.4
+scikit-learn==1.8.0
+scipy==1.17.1
+joblib==1.5.3
+
+# --- Transformer fine-tuning (Phase 2, production path — run on Colab/GPU) ---
+torch==2.13.0
+transformers==5.16.1
+datasets==3.0.1
+accelerate==1.0.1
+sentencepiece==0.2.0
+
+# --- Experiment tracking + registry (Phase 2/3) ---
+mlflow==3.15.2
+
+# --- Inference optimization (Phase 4) ---
+onnx==1.22.0
+onnxruntime==1.25.0
+optimum[onnxruntime]==1.21.2
+
+# --- Serving (Phase 6) ---
+fastapi==0.141.1
+uvicorn[standard]==0.46.0
+pydantic==2.13.3
+
+# --- Monitoring (Phase 6) ---
+evidently==0.7.21
+
+# --- Demo UI (Phase 6) ---
+gradio==6.26.0
+
+# --- CI / testing ---
+pytest==9.1.1
+httpx==0.28.1
+
+# --- Misc ---
+requests==2.33.1
+tqdm==4.70.0
+matplotlib==3.10.9

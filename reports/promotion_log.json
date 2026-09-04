@@ -1,0 +1,38 @@
+[
+  {
+    "timestamp": "2026-09-02T06:21:20.900357+00:00",
+    "run_id": "d4e6ad723fac4f55bc22d97f7a2c4536",
+    "run_name": "v3_weighted_lower_lr",
+    "candidate_version": 1,
+    "candidate_test_macro_f1": 0.6943440051269141,
+    "candidate_test_minority_f1": 0.5630761395467277,
+    "previous_production_version": null,
+    "previous_production_test_macro_f1": null,
+    "decision": "promoted",
+    "reason": "No existing production version to compare against \u2014 bootstrap promotion of candidate (test_macro_f1=0.6943)."
+  },
+  {
+    "timestamp": "2026-09-02T06:21:24.403998+00:00",
+    "run_id": "91fc51ce26164c85acf3174bf729e85f",
+    "run_name": "v1_baseline_lr1e-3",
+    "candidate_version": 2,
+    "candidate_test_macro_f1": 0.8033010495332156,
+    "candidate_test_minority_f1": 0.7573798783144398,
+    "previous_production_version": 1,
+    "previous_production_test_macro_f1": 0.6943440051269141,
+    "decision": "promoted",
+    "reason": "PROMOTED: candidate macro-F1 0.8033 beats production 0.6943 by 0.1090 (>= margin 0.01); minority-class F1 0.7574 does not regress vs production 0.5631."
+  },
+  {
+    "timestamp": "2026-09-02T15:37:20.178864+00:00",
+    "run_id": "d4e6ad723fac4f55bc22d97f7a2c4536",
+    "run_name": "v3_weighted_lower_lr",
+    "candidate_version": 3,
+    "candidate_test_macro_f1": 0.6943440051269141,
+    "candidate_test_minority_f1": 0.5630761395467277,
+    "previous_production_version": 2,
+    "previous_production_test_macro_f1": 0.8033010495332156,
+    "decision": "rejected",
+    "reason": "REJECTED: candidate macro-F1 0.6943 does not exceed production macro-F1 0.8033 by the required margin of 0.01 (needed >= 0.8133)."
+  }
+]

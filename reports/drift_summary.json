@@ -1,0 +1,7 @@
+{
+  "status": "ok",
+  "n_reference_rows": 2000,
+  "n_current_rows": 63,
+  "report_html": "reports/drift_report.html",
+  "raw_metrics_count": 4
+}

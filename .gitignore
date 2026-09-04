@@ -1,0 +1,39 @@
+# Data (large / regenerable — see data/make_dataset.py)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*.csv
+!data/processed/.gitkeep
+
+# MLflow local tracking store
+mlruns/
+mlartifacts/
+mlflow.db
+
+# Models / exports — candidate checkpoints from every training variant are
+# regenerable via scripts and too large for git, so those stay out. The
+# final promoted+optimized ONNX model under models/onnx/ IS committed on
+# purpose: CI's regression check (src/registry/ci_check.py) re-evaluates
+# it on every push, and that only works if the runner actually has it.
+models/candidates/
+models/production_cache/
+models/baseline/*.joblib
+!models/.gitkeep
+
+# Live request logs (Phase 6) — runtime data, not source
+logs/*.jsonl
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Env
+.env
