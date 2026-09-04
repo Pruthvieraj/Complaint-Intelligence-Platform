@@ -1,0 +1,37 @@
+{
+  "hardware": "x86_64",
+  "platform": "Linux-6.18.44-fc-v22-x86_64-with-glibc2.39",
+  "batch_size": 1,
+  "n_reps": 100,
+  "n_warmup_discarded": 15,
+  "results": {
+    "pytorch_fp32": {
+      "p50_ms": 1.908,
+      "p95_ms": 2.284,
+      "p99_ms": 2.431,
+      "mean_ms": 1.978,
+      "throughput_rps": 524.22,
+      "model_size_mb": 1.669
+    },
+    "onnx_fp32": {
+      "p50_ms": 1.106,
+      "p95_ms": 1.26,
+      "p99_ms": 1.41,
+      "mean_ms": 1.123,
+      "throughput_rps": 903.79,
+      "model_size_mb": 1.766
+    },
+    "onnx_int8": {
+      "p50_ms": 1.122,
+      "p95_ms": 1.287,
+      "p99_ms": 1.876,
+      "mean_ms": 1.16,
+      "throughput_rps": 891.14,
+      "model_size_mb": 0.555
+    }
+  },
+  "summary": {
+    "p95_speedup_pytorch_to_onnx_int8": 1.77,
+    "model_size_reduction_x": 3.01
+  }
+}

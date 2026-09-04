@@ -1,0 +1,77 @@
+{
+  "results": [
+    {
+      "name": "v1_baseline_lr1e-3",
+      "run_id": "91fc51ce26164c85acf3174bf729e85f",
+      "val_macro_f1": 0.7688627633120937,
+      "test_macro_f1": 0.8033010495332156,
+      "test_minority_class_f1": 0.7573798783144398,
+      "train_time_seconds": 92.13919496536255,
+      "artifact_dir": "models/candidates/v1_baseline_lr1e-3"
+    },
+    {
+      "name": "v6_weighted_inv_sqrt_freq",
+      "run_id": "ccceae4d8ac74640986e1fd21845d4e9",
+      "val_macro_f1": 0.741638469294714,
+      "test_macro_f1": 0.7739810751826804,
+      "test_minority_class_f1": 0.7184952769892258,
+      "train_time_seconds": 85.46833038330078,
+      "artifact_dir": "models/candidates/v6_weighted_inv_sqrt_freq"
+    },
+    {
+      "name": "v5_weighted_bigger_model",
+      "run_id": "a30449d5b995409e8b6040e921e898a1",
+      "val_macro_f1": 0.6924245946259561,
+      "test_macro_f1": 0.7360109185833216,
+      "test_minority_class_f1": 0.6641324849420541,
+      "train_time_seconds": 176.54803037643433,
+      "artifact_dir": "models/candidates/v5_weighted_bigger_model"
+    },
+    {
+      "name": "v4_weighted_short_seq",
+      "run_id": "a31e96c6967441328949fee2935a7c0f",
+      "val_macro_f1": 0.665351591576968,
+      "test_macro_f1": 0.7050042530565261,
+      "test_minority_class_f1": 0.5978053946803946,
+      "train_time_seconds": 57.68455958366394,
+      "artifact_dir": "models/candidates/v4_weighted_short_seq"
+    },
+    {
+      "name": "v2_weighted_inv_freq",
+      "run_id": "1a134681059f4fc0849551c5323cc62e",
+      "val_macro_f1": 0.6603032549602572,
+      "test_macro_f1": 0.70005519964693,
+      "test_minority_class_f1": 0.6079527628642761,
+      "train_time_seconds": 93.34580826759338,
+      "artifact_dir": "models/candidates/v2_weighted_inv_freq"
+    },
+    {
+      "name": "v3_weighted_lower_lr",
+      "run_id": "d4e6ad723fac4f55bc22d97f7a2c4536",
+      "val_macro_f1": 0.6600422314454244,
+      "test_macro_f1": 0.6943440051269141,
+      "test_minority_class_f1": 0.5630761395467277,
+      "train_time_seconds": 95.09905934333801,
+      "artifact_dir": "models/candidates/v3_weighted_lower_lr"
+    }
+  ],
+  "best": {
+    "name": "v1_baseline_lr1e-3",
+    "run_id": "91fc51ce26164c85acf3174bf729e85f",
+    "val_macro_f1": 0.7688627633120937,
+    "test_macro_f1": 0.8033010495332156,
+    "test_minority_class_f1": 0.7573798783144398,
+    "train_time_seconds": 92.13919496536255,
+    "artifact_dir": "models/candidates/v1_baseline_lr1e-3"
+  },
+  "label2id": {
+    "Checking or savings account": 0,
+    "Credit card or prepaid card": 1,
+    "Credit reporting or other personal consumer reports": 2,
+    "Debt collection": 3,
+    "Money transfer, virtual currency, or money service": 4,
+    "Mortgage": 5,
+    "Student loan": 6,
+    "Vehicle loan or lease": 7
+  }
+}

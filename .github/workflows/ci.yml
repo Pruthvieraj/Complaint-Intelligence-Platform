@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install CI dependencies
+        # Deliberately not the full requirements.txt: free runners have no
+        # business installing torch/transformers/mlflow just to run unit
+        # tests and re-score a committed ONNX file (see Section 6.2 —
+        # this job evaluates, it does not retrain).
+        run: |
+          pip install -r requirements-serve.txt
+          pip install pandas scikit-learn pytest httpx
+
+      - name: Unit tests (data pipeline + promotion gate + API contract)
+        run: pytest tests/ -v
+
+      - name: Promotion-gate regression check
+        # Re-scores the committed production ONNX model
+        # (models/onnx/model_int8.onnx) against the fixed eval subset and
+        # fails the build if it has regressed vs. the metrics recorded at
+        # promotion time. This is the same decide_promotion() logic from
+        # Phase 3, applied as a required check on every push.
+        run: python -m src.registry.ci_check
+
+      - name: Upload CI check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-check-report
+          path: reports/ci_check_result.json
+          if-no-files-found: ignore

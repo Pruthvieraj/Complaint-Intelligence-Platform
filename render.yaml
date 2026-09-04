@@ -1,0 +1,15 @@
+# Render (render.com) free-tier deployment config.
+# Free web services on Render spin down after ~15 min of inactivity and
+# take roughly 30-50s to wake on the next request — stated here and in
+# the README rather than presenting the live demo link as instant-always
+# (Section 6.1 of the project scope).
+services:
+  - type: web
+    name: complaint-intelligence-platform
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"

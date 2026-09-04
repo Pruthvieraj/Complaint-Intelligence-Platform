@@ -1,0 +1,29 @@
+{
+  "name": "v1_baseline_lr1e-3",
+  "lr": 0.001,
+  "weighting": "none",
+  "max_len": 96,
+  "d_model": 96,
+  "nhead": 4,
+  "num_layers": 2,
+  "label2id": {
+    "Checking or savings account": 0,
+    "Credit card or prepaid card": 1,
+    "Credit reporting or other personal consumer reports": 2,
+    "Debt collection": 3,
+    "Money transfer, virtual currency, or money service": 4,
+    "Mortgage": 5,
+    "Student loan": 6,
+    "Vehicle loan or lease": 7
+  },
+  "id2label": {
+    "0": "Checking or savings account",
+    "1": "Credit card or prepaid card",
+    "2": "Credit reporting or other personal consumer reports",
+    "3": "Debt collection",
+    "4": "Money transfer, virtual currency, or money service",
+    "5": "Mortgage",
+    "6": "Student loan",
+    "7": "Vehicle loan or lease"
+  }
+}

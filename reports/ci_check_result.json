@@ -1,0 +1,11 @@
+{
+  "eval_subset_rows": 320,
+  "reevaluated_macro_f1": 0.7568,
+  "reference_macro_f1": 0.8033,
+  "reevaluated_minority_f1": 0.7352,
+  "reference_minority_f1": 0.7574,
+  "tolerance": 0.05,
+  "macro_f1_check": "PASS",
+  "minority_f1_check": "PASS",
+  "overall": "PASS"
+}
