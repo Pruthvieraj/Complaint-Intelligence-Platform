@@ -19,10 +19,10 @@ import argparse
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-import mlflow
-from mlflow import MlflowClient
-from mlflow.exceptions import MlflowException
+if TYPE_CHECKING:
+    from mlflow import MlflowClient
 
 MODEL_NAME = "complaint-classifier"
 PRODUCTION_ALIAS = "production"
@@ -45,11 +45,15 @@ def get_minority_labels(train_csv: str = "data/processed/train.csv", n: int = 3)
 
 
 def get_run_metrics(run_id: str) -> dict:
+    import mlflow
+
     run = mlflow.get_run(run_id)
     return dict(run.data.metrics)
 
 
-def ensure_registered_model(client: MlflowClient):
+def ensure_registered_model(client: "MlflowClient"):
+    from mlflow.exceptions import MlflowException
+
     try:
         client.get_registered_model(MODEL_NAME)
     except MlflowException:
@@ -58,16 +62,18 @@ def ensure_registered_model(client: MlflowClient):
         )
 
 
-def register_candidate(client: MlflowClient, run_id: str) -> str:
+def register_candidate(client: "MlflowClient", run_id: str) -> str:
     ensure_registered_model(client)
     model_uri = f"runs:/{run_id}/model"
     mv = client.create_model_version(name=MODEL_NAME, source=model_uri, run_id=run_id)
     return mv.version
 
 
-def get_production(client: MlflowClient):
+def get_production(client: "MlflowClient"):
     """Returns (version, metrics) for the current production alias, or
     (None, None) if nothing has been promoted yet."""
+    from mlflow.exceptions import MlflowException
+
     try:
         mv = client.get_model_version_by_alias(MODEL_NAME, PRODUCTION_ALIAS)
     except MlflowException:
@@ -120,6 +126,8 @@ def _append_log(entry: dict):
 
 
 def register_and_check(run_id: str, run_name: str | None = None, dry_run: bool = False) -> bool:
+    from mlflow import MlflowClient
+
     client = MlflowClient()
     version = register_candidate(client, run_id)
     candidate_metrics = get_run_metrics(run_id)
