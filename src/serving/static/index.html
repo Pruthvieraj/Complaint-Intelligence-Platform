@@ -9,6 +9,7 @@
     --bg-0: #0b0f19;
     --bg-1: #10162a;
     --card: #141b2e;
+    --card-2: #101828;
     --card-border: #232c47;
     --text-0: #f4f6fb;
     --text-1: #aab2cc;
@@ -31,274 +32,374 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     min-height: 100vh;
   }
-  .wrap {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 56px 24px 80px;
-  }
-  header.hero { text-align: center; margin-bottom: 40px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 24px 80px; }
+  header.hero { text-align: center; margin-bottom: 28px; }
+  .eyebrow-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
   .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12.5px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
     color: var(--accent-2);
     background: rgba(34,211,238,0.08);
     border: 1px solid rgba(34,211,238,0.25);
-    padding: 6px 14px;
-    border-radius: 999px;
-    margin-bottom: 20px;
+    padding: 6px 14px; border-radius: 999px;
   }
   .eyebrow .dot {
     width: 7px; height: 7px; border-radius: 50%;
     background: var(--good);
     box-shadow: 0 0 0 3px rgba(16,185,129,0.2);
   }
+  .eyebrow.ci-badge { padding: 3px 10px 3px 14px; }
+  .eyebrow.ci-badge img { display: block; height: 16px; border-radius: 3px; }
   h1 {
-    font-size: clamp(30px, 4.5vw, 46px);
-    line-height: 1.1;
-    margin: 0 0 14px;
+    font-size: clamp(28px, 4.5vw, 44px);
+    line-height: 1.1; margin: 0 0 12px;
     background: linear-gradient(135deg, #fff, #b9c2e6 60%, var(--accent-2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    font-weight: 800; letter-spacing: -0.02em;
   }
-  .sub {
-    color: var(--text-1);
-    font-size: 16.5px;
-    max-width: 620px;
-    margin: 0 auto;
-    line-height: 1.55;
+  .sub { color: var(--text-1); font-size: 16px; max-width: 640px; margin: 0 auto; line-height: 1.55; }
+
+  nav.tabs {
+    display: flex; justify-content: center; gap: 6px; flex-wrap: wrap;
+    margin: 32px 0 24px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    padding: 6px; border-radius: 14px;
+    max-width: fit-content;
+    margin-left: auto; margin-right: auto;
   }
-  .stack {
-    display: grid;
-    gap: 20px;
+  nav.tabs button {
+    appearance: none; border: none; cursor: pointer;
+    background: transparent; color: var(--text-1);
+    font-size: 13.5px; font-weight: 600;
+    padding: 9px 18px; border-radius: 10px;
+    transition: all .15s ease;
+    font-family: inherit;
   }
+  nav.tabs button:hover { color: var(--text-0); }
+  nav.tabs button.active { background: linear-gradient(135deg, var(--accent), #8385f6); color: white; }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeUp .3s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .stack { display: grid; gap: 20px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 760px) { .grid-2 { grid-template-columns: 1fr; } }
+
   .card {
     background: linear-gradient(180deg, var(--card), var(--bg-1));
     border: 1px solid var(--card-border);
-    border-radius: 18px;
-    padding: 28px;
+    border-radius: 18px; padding: 26px;
     box-shadow: 0 20px 50px -25px rgba(0,0,0,0.6);
   }
+  .card h3 { margin: 0 0 4px; font-size: 15px; }
+  .card .card-sub { color: var(--text-2); font-size: 12.5px; margin: 0 0 18px; }
+
   label.field-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-1);
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    display: block; font-size: 13px; font-weight: 600; color: var(--text-1);
+    margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.04em;
   }
+  .mode-toggle { display: flex; gap: 6px; margin-bottom: 16px; }
+  .mode-toggle button {
+    flex: 1; appearance: none; border: 1px solid var(--card-border); cursor: pointer;
+    background: rgba(255,255,255,0.02); color: var(--text-1);
+    font-size: 13px; font-weight: 600; padding: 9px; border-radius: 10px;
+    font-family: inherit; transition: all .15s ease;
+  }
+  .mode-toggle button.active { background: rgba(99,102,241,0.15); border-color: var(--accent); color: var(--text-0); }
+
   textarea {
-    width: 100%;
-    min-height: 140px;
-    resize: vertical;
-    background: #0d1322;
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    color: var(--text-0);
-    font-size: 15px;
-    line-height: 1.5;
-    padding: 16px;
-    font-family: inherit;
-    outline: none;
+    width: 100%; min-height: 130px; resize: vertical;
+    background: #0d1322; border: 1px solid var(--card-border); border-radius: 12px;
+    color: var(--text-0); font-size: 15px; line-height: 1.5; padding: 16px;
+    font-family: inherit; outline: none;
     transition: border-color .15s ease, box-shadow .15s ease;
   }
-  textarea:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.18);
-  }
-  .examples {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 14px;
-  }
+  textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.18); }
+  .hint { font-size: 12px; color: var(--text-2); margin-top: 8px; }
+
+  .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
   .chip {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--card-border);
-    color: var(--text-1);
-    font-size: 12.5px;
-    padding: 7px 12px;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: all .15s ease;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); color: var(--text-1);
+    font-size: 12.5px; padding: 7px 12px; border-radius: 999px; cursor: pointer; transition: all .15s ease;
   }
   .chip:hover { border-color: var(--accent); color: var(--text-0); background: rgba(99,102,241,0.1); }
+  .chip.ghost { border-style: dashed; }
 
-  .actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 20px;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
+  .actions { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; gap: 16px; flex-wrap: wrap; }
   .charcount { font-size: 12.5px; color: var(--text-2); }
   button.submit {
-    appearance: none;
-    border: none;
-    cursor: pointer;
+    appearance: none; border: none; cursor: pointer;
     background: linear-gradient(135deg, var(--accent), #8385f6);
-    color: white;
-    font-weight: 700;
-    font-size: 15px;
-    padding: 13px 26px;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+    color: white; font-weight: 700; font-size: 15px; padding: 13px 26px; border-radius: 12px;
+    display: inline-flex; align-items: center; gap: 10px;
     box-shadow: 0 10px 25px -8px rgba(99,102,241,0.6);
     transition: transform .1s ease, box-shadow .15s ease, opacity .15s ease;
+    font-family: inherit;
   }
   button.submit:hover { transform: translateY(-1px); box-shadow: 0 14px 30px -8px rgba(99,102,241,0.75); }
   button.submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  button.secondary {
+    appearance: none; cursor: pointer; background: rgba(255,255,255,0.05);
+    border: 1px solid var(--card-border); color: var(--text-1);
+    font-weight: 600; font-size: 13px; padding: 9px 16px; border-radius: 10px;
+    font-family: inherit; transition: all .15s ease;
+  }
+  button.secondary:hover { color: var(--text-0); border-color: var(--accent); }
 
   .spinner {
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    border: 2.5px solid rgba(255,255,255,0.35);
-    border-top-color: white;
-    animation: spin .7s linear infinite;
-    display: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2.5px solid rgba(255,255,255,0.35); border-top-color: white;
+    animation: spin .7s linear infinite; display: none;
   }
   .spinner.on { display: inline-block; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .status-line {
-    font-size: 13px;
-    color: var(--text-2);
-    margin-top: 12px;
-    min-height: 18px;
-  }
+  .status-line { font-size: 13px; color: var(--text-2); margin-top: 12px; min-height: 18px; }
   .status-line.warn { color: var(--warn); }
   .status-line.bad { color: var(--bad); }
 
   #resultCard { display: none; }
   #resultCard.show { display: block; animation: fadeUp .35s ease; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  .result-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-bottom: 22px;
-  }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 18px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 16px;
-    color: white;
-  }
-  .metrics {
-    display: flex;
-    gap: 22px;
-    font-size: 13px;
-    color: var(--text-1);
-  }
+  .result-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 22px; }
+  .badge { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 16px; color: white; }
+  .metrics { display: flex; gap: 22px; font-size: 13px; color: var(--text-1); }
   .metrics b { color: var(--text-0); font-size: 15px; }
 
-  .bar-row {
-    display: grid;
-    grid-template-columns: 230px 1fr 56px;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 12px;
-  }
+  .bar-row { display: grid; grid-template-columns: 230px 1fr 56px; align-items: center; gap: 14px; margin-bottom: 12px; }
   .bar-label { font-size: 13.5px; color: var(--text-1); }
-  .bar-track {
-    height: 10px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-  .bar-fill {
-    height: 100%;
-    border-radius: 999px;
-    width: 0%;
-    transition: width .6s cubic-bezier(.2,.8,.2,1);
-  }
+  .bar-track { height: 10px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; width: 0%; transition: width .6s cubic-bezier(.2,.8,.2,1); }
   .bar-pct { font-size: 12.5px; color: var(--text-2); text-align: right; }
-
-  footer {
-    margin-top: 44px;
-    text-align: center;
-  }
-  .stack-badges {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 18px;
-  }
-  .tag {
-    font-size: 12px;
-    color: var(--text-2);
-    border: 1px solid var(--card-border);
-    padding: 5px 12px;
-    border-radius: 999px;
-  }
-  .links { font-size: 13.5px; color: var(--text-2); }
-  .links a { color: var(--accent-2); text-decoration: none; margin: 0 8px; }
-  .links a:hover { text-decoration: underline; }
-
   @media (max-width: 600px) {
     .bar-row { grid-template-columns: 110px 1fr 44px; }
     .bar-label { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   }
+
+  /* History */
+  #historyList { display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; }
+  .history-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.02);
+    border: 1px solid var(--card-border); font-size: 12.5px;
+  }
+  .history-item .htext { color: var(--text-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+  .history-item .hcat { flex-shrink: 0; padding: 3px 9px; border-radius: 999px; color: white; font-weight: 700; font-size: 11px; }
+  .history-empty { color: var(--text-2); font-size: 13px; text-align: center; padding: 30px 0; }
+
+  /* Batch table */
+  table.batch-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.batch-table th { text-align: left; color: var(--text-2); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.03em; padding: 8px 10px; border-bottom: 1px solid var(--card-border); }
+  table.batch-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+  table.batch-table td.ttext { color: var(--text-1); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; color: white; font-weight: 700; font-size: 11.5px; white-space: nowrap; }
+
+  /* Stat tiles */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; }
+  .stat-tile { background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px; }
+  .stat-tile .stat-label { font-size: 11.5px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .stat-tile .stat-value { font-size: 26px; font-weight: 800; color: var(--text-0); }
+  .stat-tile .stat-value.small { font-size: 18px; }
+
+  .dist-row { display: grid; grid-template-columns: 200px 1fr 40px; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12.5px; }
+  .dist-row .dist-label { color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dist-track { height: 8px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; }
+  .dist-fill { height: 100%; border-radius: 999px; transition: width .5s ease; }
+  .dist-count { color: var(--text-2); text-align: right; }
+
+  /* Pipeline timeline */
+  .pipeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .stage { background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; position: relative; }
+  .stage .stage-num { font-size: 11px; color: var(--accent-2); font-weight: 800; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .stage .stage-title { font-size: 13.5px; font-weight: 700; margin-bottom: 4px; }
+  .stage .stage-desc { font-size: 12px; color: var(--text-2); line-height: 1.4; }
+
+  .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 700px) { .compare-grid { grid-template-columns: 1fr; } }
+  .compare-tile { text-align: center; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; }
+  .compare-tile .ct-label { font-size: 11.5px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .compare-tile .ct-value { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .compare-tile .ct-sub { font-size: 11.5px; color: var(--text-2); }
+  .compare-tile.win { border-color: var(--good); background: rgba(16,185,129,0.06); }
+
+  .kv-list { display: grid; gap: 10px; font-size: 13px; }
+  .kv-row { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .kv-row .k { color: var(--text-2); }
+  .kv-row .v { color: var(--text-0); font-weight: 600; text-align: right; }
+
+  .log-entry { font-size: 12.5px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); margin-bottom: 8px; }
+  .log-entry.promoted { border-left: 3px solid var(--good); }
+  .log-entry.rejected { border-left: 3px solid var(--bad); opacity: 0.8; }
+  .log-entry .le-top { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 4px; }
+  .log-entry .le-reason { color: var(--text-2); }
+
+  footer { margin-top: 44px; text-align: center; }
+  .stack-badges { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .tag { font-size: 12px; color: var(--text-2); border: 1px solid var(--card-border); padding: 5px 12px; border-radius: 999px; }
+  .links { font-size: 13.5px; color: var(--text-2); }
+  .links a { color: var(--accent-2); text-decoration: none; margin: 0 8px; }
+  .links a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
   <div class="wrap">
     <header class="hero">
-      <div class="eyebrow"><span class="dot"></span> Live model &middot; ONNX INT8 &middot; served from this page</div>
+      <div class="eyebrow-row">
+        <div class="eyebrow"><span class="dot"></span> Live model &middot; ONNX INT8</div>
+        <a class="eyebrow ci-badge" href="https://github.com/Pruthvieraj/Complaint-Intelligence-Platform/actions" target="_blank" rel="noopener">
+          <img src="https://github.com/Pruthvieraj/Complaint-Intelligence-Platform/actions/workflows/ci.yml/badge.svg" alt="CI status" />
+        </a>
+      </div>
       <h1>Complaint Intelligence Platform</h1>
       <p class="sub">
-        Paste a real consumer-complaint narrative and this classifier — a quantized
-        transformer running end-to-end through the whole MLOps pipeline behind it — will
-        predict which CFPB product/issue category it belongs to.
+        A CFPB consumer-complaint classifier with the full MLOps pipeline running behind it —
+        experiment tracking, an automated promotion gate, ONNX quantization, CI/CD, and live serving.
       </p>
     </header>
 
-    <div class="stack">
-      <section class="card">
-        <label class="field-label" for="complaintText">Consumer complaint narrative</label>
-        <textarea id="complaintText" placeholder="e.g. My credit card company charged me a fee I never agreed to and won't refund it despite three calls..."></textarea>
+    <nav class="tabs" id="tabs">
+      <button class="active" data-tab="classify">Classify</button>
+      <button data-tab="metrics">Live Metrics</button>
+      <button data-tab="model">Model &amp; Pipeline</button>
+    </nav>
 
-        <div class="examples" id="examples"></div>
+    <!-- ============ TAB 1: CLASSIFY ============ -->
+    <div class="panel active" id="panel-classify">
+      <div class="grid-2">
+        <div class="stack">
+          <section class="card">
+            <div class="mode-toggle">
+              <button class="active" id="modeSingleBtn" type="button">Single complaint</button>
+              <button id="modeBatchBtn" type="button">Batch (up to 25)</button>
+            </div>
 
-        <div class="actions">
-          <span class="charcount" id="charcount">0 / 5000 characters</span>
-          <button class="submit" id="submitBtn">
-            <span class="spinner" id="spinner"></span>
-            <span id="submitLabel">Classify complaint</span>
-          </button>
+            <div id="singleMode">
+              <label class="field-label" for="complaintText">Consumer complaint narrative</label>
+              <textarea id="complaintText" placeholder="e.g. My credit card company charged me a fee I never agreed to and won't refund it despite three calls..."></textarea>
+              <div class="examples" id="examples"></div>
+              <div class="actions">
+                <span class="charcount" id="charcount">0 / 5000 characters</span>
+                <button class="submit" id="submitBtn">
+                  <span class="spinner" id="spinner"></span>
+                  <span id="submitLabel">Classify complaint</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="batchMode" style="display:none;">
+              <label class="field-label" for="batchText">One complaint per line</label>
+              <textarea id="batchText" placeholder="Paste multiple complaints, one per line...&#10;e.g.&#10;My mortgage servicer applied my payment late...&#10;A debt collector calls me every day about a paid off loan..."></textarea>
+              <div class="examples">
+                <button class="chip ghost" id="loadBatchSampleBtn" type="button">Load 5 sample complaints</button>
+              </div>
+              <div class="actions">
+                <span class="charcount" id="batchCount">0 lines</span>
+                <button class="submit" id="batchSubmitBtn">
+                  <span class="spinner" id="batchSpinner"></span>
+                  <span id="batchSubmitLabel">Classify batch</span>
+                </button>
+              </div>
+            </div>
+            <div class="status-line" id="statusLine"></div>
+          </section>
+
+          <section class="card" id="resultCard">
+            <div class="result-top">
+              <div class="badge" id="badge">—</div>
+              <div class="metrics">
+                <div>Confidence <b id="confVal">—</b></div>
+                <div>Latency <b id="latVal">—</b></div>
+              </div>
+            </div>
+            <div id="bars"></div>
+          </section>
+
+          <section class="card" id="batchResultCard" style="display:none;">
+            <h3>Batch results</h3>
+            <p class="card-sub" id="batchResultSub"></p>
+            <div style="overflow-x:auto;">
+              <table class="batch-table" id="batchTable">
+                <thead><tr><th>Complaint</th><th>Predicted category</th><th>Confidence</th></tr></thead>
+                <tbody id="batchTableBody"></tbody>
+              </table>
+            </div>
+          </section>
         </div>
-        <div class="status-line" id="statusLine"></div>
-      </section>
 
-      <section class="card" id="resultCard">
-        <div class="result-top">
-          <div class="badge" id="badge">—</div>
-          <div class="metrics">
-            <div>Confidence <b id="confVal">—</b></div>
-            <div>Latency <b id="latVal">—</b></div>
+        <section class="card">
+          <h3>Session history</h3>
+          <p class="card-sub">Everything you've classified in this browser tab, most recent first.</p>
+          <div id="historyList"><div class="history-empty">No classifications yet — try one on the left.</div></div>
+          <button class="secondary" id="clearHistoryBtn" style="margin-top:14px; width:100%;" type="button">Clear history</button>
+        </section>
+      </div>
+    </div>
+
+    <!-- ============ TAB 2: LIVE METRICS ============ -->
+    <div class="panel" id="panel-metrics">
+      <div class="stack">
+        <section class="card">
+          <h3>Server metrics</h3>
+          <p class="card-sub">Live from <code>/metrics</code> on this running instance &middot; refreshes every 5s while this tab is open.</p>
+          <div class="stat-grid" id="serverStats">
+            <div class="stat-tile"><div class="stat-label">Uptime</div><div class="stat-value small" id="statUptime">—</div></div>
+            <div class="stat-tile"><div class="stat-label">Total requests</div><div class="stat-value" id="statTotal">—</div></div>
+            <div class="stat-tile"><div class="stat-label">p50 latency</div><div class="stat-value small" id="statP50">—</div></div>
+            <div class="stat-tile"><div class="stat-label">Mean latency</div><div class="stat-value small" id="statMean">—</div></div>
           </div>
+        </section>
+
+        <div class="grid-2">
+          <section class="card">
+            <h3>Category distribution — this server</h3>
+            <p class="card-sub">Every prediction made by anyone hitting this deployment since it last restarted.</p>
+            <div id="serverDist"><div class="history-empty">No requests yet.</div></div>
+          </section>
+          <section class="card">
+            <h3>Category distribution — your session</h3>
+            <p class="card-sub">Just what you've classified in this browser tab.</p>
+            <div id="sessionDist"><div class="history-empty">Classify something to see this fill in.</div></div>
+          </section>
         </div>
-        <div id="bars"></div>
-      </section>
+      </div>
+    </div>
+
+    <!-- ============ TAB 3: MODEL & PIPELINE ============ -->
+    <div class="panel" id="panel-model">
+      <div class="stack">
+        <section class="card">
+          <h3>The 7-phase pipeline</h3>
+          <p class="card-sub">What actually happens before a model gets anywhere near this page.</p>
+          <div class="pipeline" id="pipeline"></div>
+        </section>
+
+        <section class="card">
+          <h3>Baseline vs. production model</h3>
+          <p class="card-sub">Test-set macro-F1 across the CFPB complaint taxonomy (8 classes).</p>
+          <div class="compare-grid" id="modelCompare"></div>
+        </section>
+
+        <div class="grid-2">
+          <section class="card">
+            <h3>ONNX quantization</h3>
+            <p class="card-sub">PyTorch FP32 &rarr; ONNX FP32 &rarr; ONNX INT8, p95 latency &amp; size.</p>
+            <div id="optimBars"></div>
+          </section>
+          <section class="card">
+            <h3>Promotion gate</h3>
+            <p class="card-sub" id="gateRule">—</p>
+            <div id="promotionLog"></div>
+          </section>
+        </div>
+
+        <section class="card">
+          <h3>CI regression check</h3>
+          <p class="card-sub">Re-scores the committed INT8 model against a fixed 320-row holdout on every push.</p>
+          <div class="kv-list" id="ciInfo"></div>
+        </section>
+      </div>
     </div>
 
     <footer>
@@ -331,24 +432,59 @@
   const FALLBACK_COLOR = "#6366f1";
 
   const EXAMPLES = [
-    {
-      label: "Credit report dispute",
-      text: "There is an error on my credit report that I have disputed twice with the bureau and it still has not been corrected. This incorrect account is dragging down my credit score and I cannot get a straight answer from anyone.",
-    },
-    {
-      label: "Debt collector calls",
-      text: "A collection agency keeps calling me multiple times a day about a debt that I already paid off almost two years ago. I have sent them proof of payment and they still won't stop contacting me.",
-    },
-    {
-      label: "Credit card fee",
-      text: "My credit card company charged me a foreign transaction fee even though I never left the country. When I called to dispute it and close the account, they refused to remove the charge.",
-    },
-    {
-      label: "Frozen bank account",
-      text: "My bank froze my checking account without any notice and now I can't access my paycheck that was just deposited. Nobody at the branch can tell me why or when it will be resolved.",
-    },
+    { label: "Credit report dispute", text: "There is an error on my credit report that I have disputed twice with the bureau and it still has not been corrected. This incorrect account is dragging down my credit score and I cannot get a straight answer from anyone." },
+    { label: "Debt collector calls", text: "A collection agency keeps calling me multiple times a day about a debt that I already paid off almost two years ago. I have sent them proof of payment and they still won't stop contacting me." },
+    { label: "Credit card fee", text: "My credit card company charged me a foreign transaction fee even though I never left the country. When I called to dispute it and close the account, they refused to remove the charge." },
+    { label: "Frozen bank account", text: "My bank froze my checking account without any notice and now I can't access my paycheck that was just deposited. Nobody at the branch can tell me why or when it will be resolved." },
   ];
 
+  const BATCH_SAMPLE = [
+    "There is an error on my credit report that I have disputed twice and it still has not been corrected.",
+    "A collection agency keeps calling me multiple times a day about a debt I already paid off two years ago.",
+    "My mortgage servicer applied my payment late even though I paid on time and is now charging me a fee.",
+    "My student loan servicer transferred my loan to a new company and I lost track of my interest rate.",
+    "I've been trying to get a payoff quote for my auto loan for three weeks and no one calls me back.",
+  ];
+
+  const PIPELINE_STAGES = [
+    { title: "Data acquisition", desc: "CFPB complaint narratives pulled, cleaned, and label-collapsed from a 14-value taxonomy down to 8." },
+    { title: "Baseline", desc: "TF-IDF + Logistic Regression trained first, to know what \"good\" has to beat." },
+    { title: "Fine-tuning", desc: "Transformer trained with experiment tracking — every run logged to MLflow." },
+    { title: "Promotion gate", desc: "A candidate only replaces production if it clears a margin with no minority-class regression." },
+    { title: "ONNX optimization", desc: "Exported to ONNX and INT8-quantized for a smaller, faster model." },
+    { title: "CI/CD", desc: "Every push re-runs tests and re-scores the committed model against a fixed holdout." },
+    { title: "Deploy + monitor", desc: "Served via FastAPI, with scheduled drift monitoring against live traffic." },
+  ];
+
+  let sessionHistory = [];
+
+  // ---------- Tabs ----------
+  const tabButtons = document.querySelectorAll("nav.tabs button");
+  const panels = { classify: document.getElementById("panel-classify"), metrics: document.getElementById("panel-metrics"), model: document.getElementById("panel-model") };
+  let metricsInterval = null;
+
+  tabButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      Object.values(panels).forEach((p) => p.classList.remove("active"));
+      const target = btn.dataset.tab;
+      panels[target].classList.add("active");
+
+      if (target === "metrics") {
+        refreshServerMetrics();
+        if (!metricsInterval) metricsInterval = setInterval(refreshServerMetrics, 5000);
+      } else if (metricsInterval) {
+        clearInterval(metricsInterval);
+        metricsInterval = null;
+      }
+      if (target === "model" && !window.__modelInfoLoaded) {
+        loadModelInfo();
+      }
+    });
+  });
+
+  // ---------- Classify: single mode ----------
   const textarea = document.getElementById("complaintText");
   const charcount = document.getElementById("charcount");
   const submitBtn = document.getElementById("submitBtn");
@@ -364,20 +500,12 @@
 
   EXAMPLES.forEach((ex) => {
     const chip = document.createElement("button");
-    chip.className = "chip";
-    chip.type = "button";
-    chip.textContent = ex.label;
-    chip.addEventListener("click", () => {
-      textarea.value = ex.text;
-      updateCharcount();
-      textarea.focus();
-    });
+    chip.className = "chip"; chip.type = "button"; chip.textContent = ex.label;
+    chip.addEventListener("click", () => { textarea.value = ex.text; updateCharcount(); textarea.focus(); });
     examplesEl.appendChild(chip);
   });
 
-  function updateCharcount() {
-    charcount.textContent = `${textarea.value.length} / 5000 characters`;
-  }
+  function updateCharcount() { charcount.textContent = `${textarea.value.length} / 5000 characters`; }
   textarea.addEventListener("input", updateCharcount);
 
   function setLoading(isLoading, message) {
@@ -388,8 +516,10 @@
     statusLine.className = "status-line";
   }
 
-  function renderResult(data) {
-    const color = CATEGORY_COLORS[data.predicted_category] || FALLBACK_COLOR;
+  function categoryColor(label) { return CATEGORY_COLORS[label] || FALLBACK_COLOR; }
+
+  function renderResult(data, sourceText) {
+    const color = categoryColor(data.predicted_category);
     badge.style.background = color;
     badge.textContent = data.predicted_category;
     confVal.textContent = (data.confidence * 100).toFixed(1) + "%";
@@ -398,44 +528,24 @@
     bars.innerHTML = "";
     const sorted = [...data.top_k].sort((a, b) => b.probability - a.probability);
     sorted.forEach((item) => {
-      const row = document.createElement("div");
-      row.className = "bar-row";
-
-      const label = document.createElement("div");
-      label.className = "bar-label";
-      label.textContent = item.label;
-
-      const track = document.createElement("div");
-      track.className = "bar-track";
-      const fill = document.createElement("div");
-      fill.className = "bar-fill";
-      fill.style.background = CATEGORY_COLORS[item.label] || FALLBACK_COLOR;
+      const row = document.createElement("div"); row.className = "bar-row";
+      const label = document.createElement("div"); label.className = "bar-label"; label.textContent = item.label;
+      const track = document.createElement("div"); track.className = "bar-track";
+      const fill = document.createElement("div"); fill.className = "bar-fill"; fill.style.background = categoryColor(item.label);
       track.appendChild(fill);
-
-      const pct = document.createElement("div");
-      pct.className = "bar-pct";
-      pct.textContent = (item.probability * 100).toFixed(1) + "%";
-
-      row.appendChild(label);
-      row.appendChild(track);
-      row.appendChild(pct);
+      const pct = document.createElement("div"); pct.className = "bar-pct"; pct.textContent = (item.probability * 100).toFixed(1) + "%";
+      row.appendChild(label); row.appendChild(track); row.appendChild(pct);
       bars.appendChild(row);
-
-      requestAnimationFrame(() => {
-        fill.style.width = (item.probability * 100).toFixed(1) + "%";
-      });
+      requestAnimationFrame(() => { fill.style.width = (item.probability * 100).toFixed(1) + "%"; });
     });
 
     resultCard.classList.add("show");
+    addToHistory(sourceText, data.predicted_category, data.confidence);
   }
 
   async function classify() {
     const text = textarea.value.trim();
-    if (!text) {
-      statusLine.textContent = "Type or paste a complaint first.";
-      statusLine.className = "status-line warn";
-      return;
-    }
+    if (!text) { statusLine.textContent = "Type or paste a complaint first."; statusLine.className = "status-line warn"; return; }
 
     setLoading(true, "Sending to the model...");
     const slowNotice = setTimeout(() => {
@@ -444,20 +554,15 @@
     }, 4000);
 
     try {
-      const res = await fetch("/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
+      const res = await fetch("/predict", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
       clearTimeout(slowNotice);
-
       if (!res.ok) {
         const errBody = await res.json().catch(() => ({}));
         throw new Error(errBody.detail ? JSON.stringify(errBody.detail) : `Request failed (${res.status})`);
       }
       const data = await res.json();
       setLoading(false, "");
-      renderResult(data);
+      renderResult(data, text);
     } catch (err) {
       clearTimeout(slowNotice);
       setLoading(false, "");
@@ -465,13 +570,253 @@
       statusLine.className = "status-line bad";
     }
   }
-
   submitBtn.addEventListener("click", classify);
-  textarea.addEventListener("keydown", (e) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") classify();
+  textarea.addEventListener("keydown", (e) => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") classify(); });
+
+  // ---------- Classify: mode toggle ----------
+  const modeSingleBtn = document.getElementById("modeSingleBtn");
+  const modeBatchBtn = document.getElementById("modeBatchBtn");
+  const singleMode = document.getElementById("singleMode");
+  const batchMode = document.getElementById("batchMode");
+  modeSingleBtn.addEventListener("click", () => {
+    modeSingleBtn.classList.add("active"); modeBatchBtn.classList.remove("active");
+    singleMode.style.display = ""; batchMode.style.display = "none";
+    statusLine.textContent = "";
+  });
+  modeBatchBtn.addEventListener("click", () => {
+    modeBatchBtn.classList.add("active"); modeSingleBtn.classList.remove("active");
+    batchMode.style.display = ""; singleMode.style.display = "none";
+    statusLine.textContent = "";
   });
 
+  // ---------- Classify: batch mode ----------
+  const batchText = document.getElementById("batchText");
+  const batchCount = document.getElementById("batchCount");
+  const batchSubmitBtn = document.getElementById("batchSubmitBtn");
+  const batchSubmitLabel = document.getElementById("batchSubmitLabel");
+  const batchSpinner = document.getElementById("batchSpinner");
+  const loadBatchSampleBtn = document.getElementById("loadBatchSampleBtn");
+  const batchResultCard = document.getElementById("batchResultCard");
+  const batchResultSub = document.getElementById("batchResultSub");
+  const batchTableBody = document.getElementById("batchTableBody");
+
+  function linesOf(text) { return text.split("\n").map((l) => l.trim()).filter(Boolean); }
+  function updateBatchCount() {
+    const n = linesOf(batchText.value).length;
+    batchCount.textContent = `${n} line${n === 1 ? "" : "s"}${n > 25 ? " (max 25, extras ignored)" : ""}`;
+  }
+  batchText.addEventListener("input", updateBatchCount);
+  loadBatchSampleBtn.addEventListener("click", () => { batchText.value = BATCH_SAMPLE.join("\n"); updateBatchCount(); });
+
+  async function classifyBatch() {
+    const texts = linesOf(batchText.value).slice(0, 25);
+    if (texts.length === 0) { statusLine.textContent = "Add at least one line first."; statusLine.className = "status-line warn"; return; }
+
+    batchSubmitBtn.disabled = true; batchSpinner.classList.add("on"); batchSubmitLabel.textContent = "Classifying...";
+    statusLine.textContent = "Sending batch to the model...";
+    statusLine.className = "status-line";
+    const slowNotice = setTimeout(() => {
+      statusLine.textContent = "Still waking up — free-tier servers sleep after 15 min idle, first request can take up to ~50s.";
+      statusLine.className = "status-line warn";
+    }, 4000);
+
+    try {
+      const res = await fetch("/predict/batch", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ texts }) });
+      clearTimeout(slowNotice);
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.detail ? JSON.stringify(errBody.detail) : `Request failed (${res.status})`);
+      }
+      const data = await res.json();
+      statusLine.textContent = "";
+      batchResultSub.textContent = `${data.results.length} complaints classified in ${data.total_latency_ms.toFixed(1)} ms total.`;
+      batchTableBody.innerHTML = "";
+      data.results.forEach((item) => {
+        const tr = document.createElement("tr");
+        const tdText = document.createElement("td"); tdText.className = "ttext"; tdText.textContent = item.text; tdText.title = item.text;
+        const tdCat = document.createElement("td");
+        const catBadge = document.createElement("span"); catBadge.className = "mini-badge"; catBadge.style.background = categoryColor(item.predicted_category); catBadge.textContent = item.predicted_category;
+        tdCat.appendChild(catBadge);
+        const tdConf = document.createElement("td"); tdConf.textContent = (item.confidence * 100).toFixed(1) + "%";
+        tr.appendChild(tdText); tr.appendChild(tdCat); tr.appendChild(tdConf);
+        batchTableBody.appendChild(tr);
+        addToHistory(item.text, item.predicted_category, item.confidence);
+      });
+      batchResultCard.style.display = "";
+    } catch (err) {
+      clearTimeout(slowNotice);
+      statusLine.textContent = "Something went wrong: " + err.message;
+      statusLine.className = "status-line bad";
+    } finally {
+      batchSubmitBtn.disabled = false; batchSpinner.classList.remove("on"); batchSubmitLabel.textContent = "Classify batch";
+    }
+  }
+  batchSubmitBtn.addEventListener("click", classifyBatch);
+
+  // ---------- History ----------
+  const historyList = document.getElementById("historyList");
+  const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+
+  function addToHistory(text, category, confidence) {
+    sessionHistory.unshift({ text, category, confidence, ts: Date.now() });
+    if (sessionHistory.length > 100) sessionHistory.pop();
+    renderHistory();
+    renderSessionDist();
+  }
+
+  function renderHistory() {
+    if (sessionHistory.length === 0) {
+      historyList.innerHTML = '<div class="history-empty">No classifications yet — try one on the left.</div>';
+      return;
+    }
+    historyList.innerHTML = "";
+    sessionHistory.slice(0, 30).forEach((h) => {
+      const row = document.createElement("div"); row.className = "history-item";
+      const txt = document.createElement("div"); txt.className = "htext"; txt.title = h.text; txt.textContent = h.text;
+      const cat = document.createElement("div"); cat.className = "hcat"; cat.style.background = categoryColor(h.category);
+      cat.textContent = (h.confidence * 100).toFixed(0) + "%";
+      row.appendChild(txt); row.appendChild(cat);
+      historyList.appendChild(row);
+    });
+  }
+  clearHistoryBtn.addEventListener("click", () => { sessionHistory = []; renderHistory(); renderSessionDist(); });
+
+  // ---------- Live Metrics tab ----------
+  const statUptime = document.getElementById("statUptime");
+  const statTotal = document.getElementById("statTotal");
+  const statP50 = document.getElementById("statP50");
+  const statMean = document.getElementById("statMean");
+  const serverDist = document.getElementById("serverDist");
+  const sessionDist = document.getElementById("sessionDist");
+
+  function formatUptime(seconds) {
+    if (seconds < 60) return `${Math.round(seconds)}s`;
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${Math.round(seconds % 60)}s`;
+    return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
+  }
+
+  function renderDistribution(container, counts) {
+    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    if (entries.length === 0) { container.innerHTML = '<div class="history-empty">Nothing yet.</div>'; return; }
+    const max = entries[0][1];
+    container.innerHTML = "";
+    entries.forEach(([label, count]) => {
+      const row = document.createElement("div"); row.className = "dist-row";
+      const l = document.createElement("div"); l.className = "dist-label"; l.textContent = label; l.title = label;
+      const track = document.createElement("div"); track.className = "dist-track";
+      const fill = document.createElement("div"); fill.className = "dist-fill";
+      fill.style.background = categoryColor(label);
+      fill.style.width = Math.max(4, (count / max) * 100) + "%";
+      track.appendChild(fill);
+      const c = document.createElement("div"); c.className = "dist-count"; c.textContent = count;
+      row.appendChild(l); row.appendChild(track); row.appendChild(c);
+      container.appendChild(row);
+    });
+  }
+
+  function renderSessionDist() {
+    const counts = {};
+    sessionHistory.forEach((h) => { counts[h.category] = (counts[h.category] || 0) + 1; });
+    renderDistribution(sessionDist, counts);
+  }
+
+  async function refreshServerMetrics() {
+    try {
+      const res = await fetch("/metrics");
+      if (!res.ok) return;
+      const data = await res.json();
+      statUptime.textContent = formatUptime(data.uptime_seconds);
+      statTotal.textContent = data.total_requests;
+      statP50.textContent = data.recent_latency_ms.p50 != null ? data.recent_latency_ms.p50 + " ms" : "—";
+      statMean.textContent = data.recent_latency_ms.mean != null ? data.recent_latency_ms.mean + " ms" : "—";
+      renderDistribution(serverDist, data.category_counts || {});
+    } catch (e) { /* server may be waking up — silently retry on next interval */ }
+  }
+
+  // ---------- Model & Pipeline tab ----------
+  function renderPipeline() {
+    const el = document.getElementById("pipeline");
+    el.innerHTML = "";
+    PIPELINE_STAGES.forEach((s, i) => {
+      const div = document.createElement("div"); div.className = "stage";
+      div.innerHTML = `<div class="stage-num">PHASE ${i === 0 ? 0 : i + 1}</div><div class="stage-title">${s.title}</div><div class="stage-desc">${s.desc}</div>`;
+      el.appendChild(div);
+    });
+  }
+  renderPipeline();
+
+  async function loadModelInfo() {
+    window.__modelInfoLoaded = true;
+    try {
+      const res = await fetch("/model-info");
+      const info = await res.json();
+
+      const compareEl = document.getElementById("modelCompare");
+      compareEl.innerHTML = `
+        <div class="compare-tile">
+          <div class="ct-label">Baseline (TF-IDF + LogReg)</div>
+          <div class="ct-value">${(info.baseline.test_macro_f1 * 100).toFixed(1)}%</div>
+          <div class="ct-sub">test macro-F1</div>
+        </div>
+        <div class="compare-tile win">
+          <div class="ct-label">Production transformer</div>
+          <div class="ct-value">${(info.production_model.test_macro_f1 * 100).toFixed(1)}%</div>
+          <div class="ct-sub">test macro-F1 &middot; +${((info.production_model.test_macro_f1 - info.baseline.test_macro_f1) * 100).toFixed(1)}pt over baseline</div>
+        </div>
+        <div class="compare-tile">
+          <div class="ct-label">Minority-class F1</div>
+          <div class="ct-value">${(info.production_model.test_minority_class_f1 * 100).toFixed(1)}%</div>
+          <div class="ct-sub">rarest 3 categories</div>
+        </div>`;
+
+      const optim = info.optimization;
+      const optimEl = document.getElementById("optimBars");
+      const stages = [
+        { label: "PyTorch FP32", ms: optim.pytorch_fp32.p95_ms, mb: optim.pytorch_fp32.model_size_mb },
+        { label: "ONNX FP32", ms: optim.onnx_fp32.p95_ms, mb: optim.onnx_fp32.model_size_mb },
+        { label: "ONNX INT8", ms: optim.onnx_int8.p95_ms, mb: optim.onnx_int8.model_size_mb },
+      ];
+      const maxMs = Math.max(...stages.map((s) => s.ms));
+      optimEl.innerHTML = "";
+      stages.forEach((s, i) => {
+        const row = document.createElement("div"); row.className = "bar-row"; row.style.gridTemplateColumns = "120px 1fr 90px";
+        const label = document.createElement("div"); label.className = "bar-label"; label.textContent = s.label;
+        const track = document.createElement("div"); track.className = "bar-track";
+        const fill = document.createElement("div"); fill.className = "bar-fill";
+        fill.style.background = i === 2 ? "#10b981" : "#6366f1";
+        track.appendChild(fill);
+        const val = document.createElement("div"); val.className = "bar-pct"; val.textContent = `${s.ms} ms · ${s.mb} MB`;
+        row.appendChild(label); row.appendChild(track); row.appendChild(val);
+        optimEl.appendChild(row);
+        requestAnimationFrame(() => { fill.style.width = (s.ms / maxMs) * 100 + "%"; });
+      });
+      const summary = document.createElement("p"); summary.className = "card-sub"; summary.style.marginTop = "14px";
+      summary.textContent = `${optim.p95_speedup_pytorch_to_onnx_int8}x faster p95 latency, ${optim.model_size_reduction_x}x smaller on disk, PyTorch FP32 → ONNX INT8.`;
+      optimEl.appendChild(summary);
+
+      document.getElementById("gateRule").textContent = `Margin: ${info.promotion_gate.margin} macro-F1 · Minority-class tolerance: ${info.promotion_gate.minority_f1_tolerance}`;
+      const logEl = document.getElementById("promotionLog");
+      logEl.innerHTML = "";
+      info.promotion_gate.history.forEach((h) => {
+        const div = document.createElement("div"); div.className = "log-entry " + h.decision;
+        div.innerHTML = `<div class="le-top"><span>${h.run_name} (v${h.candidate_version})</span><span style="color:${h.decision === "promoted" ? "#10b981" : "#ef4444"}">${h.decision.toUpperCase()}</span></div><div class="le-reason">macro-F1 ${(h.candidate_test_macro_f1 * 100).toFixed(1)}% — ${h.reason}</div>`;
+        logEl.appendChild(div);
+      });
+
+      const ci = info.ci_regression_check;
+      document.getElementById("ciInfo").innerHTML = `
+        <div class="kv-row"><span class="k">Eval subset size</span><span class="v">${ci.eval_subset_rows} rows</span></div>
+        <div class="kv-row"><span class="k">Re-evaluated macro-F1</span><span class="v">${(ci.reevaluated_macro_f1 * 100).toFixed(1)}%</span></div>
+        <div class="kv-row"><span class="k">Reference (promotion-time) macro-F1</span><span class="v">${(ci.reference_macro_f1 * 100).toFixed(1)}%</span></div>
+        <div class="kv-row"><span class="k">Tolerance</span><span class="v">${ci.tolerance}</span></div>
+        <div class="kv-row"><span class="k">Result</span><span class="v" style="color:#10b981">${ci.overall}</span></div>`;
+    } catch (e) {
+      document.getElementById("modelCompare").innerHTML = '<div class="history-empty">Could not load model info right now.</div>';
+    }
+  }
+
   updateCharcount();
+  updateBatchCount();
 </script>
 </body>
 </html>

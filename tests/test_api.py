@@ -44,4 +44,40 @@ def test_metrics_endpoint_after_predictions(client):
     client.post("/predict", json={"text": "I was charged an overdraft fee I did not expect."})
     r = client.get("/metrics")
     assert r.status_code == 200
-    assert r.json()["total_requests"] >= 1
+    body = r.json()
+    assert body["total_requests"] >= 1
+    assert isinstance(body["category_counts"], dict)
+    assert sum(body["category_counts"].values()) >= 1
+
+
+def test_predict_batch_returns_one_result_per_input(client):
+    texts = [
+        "My credit report has an account I do not recognize.",
+        "A debt collector calls me every day about a paid-off loan.",
+    ]
+    r = client.post("/predict/batch", json={"texts": texts})
+    assert r.status_code == 200
+    body = r.json()
+    assert len(body["results"]) == len(texts)
+    for item, original_text in zip(body["results"], texts):
+        assert item["text"] == original_text
+        assert 0.0 <= item["confidence"] <= 1.0
+    assert body["total_latency_ms"] >= 0
+
+
+def test_predict_batch_rejects_empty_list(client):
+    r = client.post("/predict/batch", json={"texts": []})
+    assert r.status_code == 422
+
+
+def test_predict_batch_rejects_too_many_items(client):
+    r = client.post("/predict/batch", json={"texts": ["short complaint"] * 26})
+    assert r.status_code == 422
+
+
+def test_model_info_exposes_real_training_numbers(client):
+    r = client.get("/model-info")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["production_model"]["test_macro_f1"] > body["baseline"]["test_macro_f1"]
+    assert body["ci_regression_check"]["overall"] == "PASS"
