@@ -21,6 +21,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 
 from src.serving.inference import ComplaintClassifier
 from src.serving.schemas import HealthResponse, PredictRequest, PredictResponse
@@ -28,6 +29,13 @@ from src.serving.schemas import HealthResponse, PredictRequest, PredictResponse
 LOG_PATH = Path("logs/requests.jsonl")
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
 _log_lock = Lock()
+
+# Phase 7 — a real front-end for the demo, not just Swagger UI. Read once at
+# import time and served directly out of memory; it's a single self-contained
+# file (inline CSS/JS, no build step, no external CDN) so there's nothing
+# else to ship or configure.
+_STATIC_DIR = Path(__file__).parent / "static"
+_INDEX_HTML = (_STATIC_DIR / "index.html").read_text()
 
 _classifier: ComplaintClassifier | None = None
 _recent_latencies: deque[float] = deque(maxlen=500)
@@ -114,10 +122,19 @@ def metrics():
     }
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def root():
+    """Serves the demo UI (src/serving/static/index.html) — this is what a
+    human hitting the live URL should see, not a bare JSON blob. Machine
+    clients get the same info at /api."""
+    return _INDEX_HTML
+
+
+@app.get("/api")
+def api_info():
     return {
         "service": "Complaint Intelligence Platform",
         "docs": "/docs",
+        "ui": "/",
         "endpoints": ["/predict", "/health", "/metrics"],
     }

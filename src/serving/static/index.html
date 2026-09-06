@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Complaint Intelligence Platform</title>
+<style>
+  :root {
+    --bg-0: #0b0f19;
+    --bg-1: #10162a;
+    --card: #141b2e;
+    --card-border: #232c47;
+    --text-0: #f4f6fb;
+    --text-1: #aab2cc;
+    --text-2: #6b7392;
+    --accent: #6366f1;
+    --accent-2: #22d3ee;
+    --good: #10b981;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background:
+      radial-gradient(1100px 600px at 12% -10%, rgba(99,102,241,0.25), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(34,211,238,0.15), transparent 55%),
+      var(--bg-0);
+    color: var(--text-0);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+  header.hero { text-align: center; margin-bottom: 40px; }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    background: rgba(34,211,238,0.08);
+    border: 1px solid rgba(34,211,238,0.25);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+  .eyebrow .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--good);
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.2);
+  }
+  h1 {
+    font-size: clamp(30px, 4.5vw, 46px);
+    line-height: 1.1;
+    margin: 0 0 14px;
+    background: linear-gradient(135deg, #fff, #b9c2e6 60%, var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .sub {
+    color: var(--text-1);
+    font-size: 16.5px;
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+  .stack {
+    display: grid;
+    gap: 20px;
+  }
+  .card {
+    background: linear-gradient(180deg, var(--card), var(--bg-1));
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 20px 50px -25px rgba(0,0,0,0.6);
+  }
+  label.field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-1);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  textarea {
+    width: 100%;
+    min-height: 140px;
+    resize: vertical;
+    background: #0d1322;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    color: var(--text-0);
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 16px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.18);
+  }
+  .examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .chip {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    color: var(--text-1);
+    font-size: 12.5px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--text-0); background: rgba(99,102,241,0.1); }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .charcount { font-size: 12.5px; color: var(--text-2); }
+  button.submit {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), #8385f6);
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 13px 26px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 25px -8px rgba(99,102,241,0.6);
+    transition: transform .1s ease, box-shadow .15s ease, opacity .15s ease;
+  }
+  button.submit:hover { transform: translateY(-1px); box-shadow: 0 14px 30px -8px rgba(99,102,241,0.75); }
+  button.submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2.5px solid rgba(255,255,255,0.35);
+    border-top-color: white;
+    animation: spin .7s linear infinite;
+    display: none;
+  }
+  .spinner.on { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .status-line {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-top: 12px;
+    min-height: 18px;
+  }
+  .status-line.warn { color: var(--warn); }
+  .status-line.bad { color: var(--bad); }
+
+  #resultCard { display: none; }
+  #resultCard.show { display: block; animation: fadeUp .35s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .result-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+  }
+  .metrics {
+    display: flex;
+    gap: 22px;
+    font-size: 13px;
+    color: var(--text-1);
+  }
+  .metrics b { color: var(--text-0); font-size: 15px; }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 230px 1fr 56px;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .bar-label { font-size: 13.5px; color: var(--text-1); }
+  .bar-track {
+    height: 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    width: 0%;
+    transition: width .6s cubic-bezier(.2,.8,.2,1);
+  }
+  .bar-pct { font-size: 12.5px; color: var(--text-2); text-align: right; }
+
+  footer {
+    margin-top: 44px;
+    text-align: center;
+  }
+  .stack-badges {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .tag {
+    font-size: 12px;
+    color: var(--text-2);
+    border: 1px solid var(--card-border);
+    padding: 5px 12px;
+    border-radius: 999px;
+  }
+  .links { font-size: 13.5px; color: var(--text-2); }
+  .links a { color: var(--accent-2); text-decoration: none; margin: 0 8px; }
+  .links a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    .bar-row { grid-template-columns: 110px 1fr 44px; }
+    .bar-label { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="eyebrow"><span class="dot"></span> Live model &middot; ONNX INT8 &middot; served from this page</div>
+      <h1>Complaint Intelligence Platform</h1>
+      <p class="sub">
+        Paste a real consumer-complaint narrative and this classifier — a quantized
+        transformer running end-to-end through the whole MLOps pipeline behind it — will
+        predict which CFPB product/issue category it belongs to.
+      </p>
+    </header>
+
+    <div class="stack">
+      <section class="card">
+        <label class="field-label" for="complaintText">Consumer complaint narrative</label>
+        <textarea id="complaintText" placeholder="e.g. My credit card company charged me a fee I never agreed to and won't refund it despite three calls..."></textarea>
+
+        <div class="examples" id="examples"></div>
+
+        <div class="actions">
+          <span class="charcount" id="charcount">0 / 5000 characters</span>
+          <button class="submit" id="submitBtn">
+            <span class="spinner" id="spinner"></span>
+            <span id="submitLabel">Classify complaint</span>
+          </button>
+        </div>
+        <div class="status-line" id="statusLine"></div>
+      </section>
+
+      <section class="card" id="resultCard">
+        <div class="result-top">
+          <div class="badge" id="badge">—</div>
+          <div class="metrics">
+            <div>Confidence <b id="confVal">—</b></div>
+            <div>Latency <b id="latVal">—</b></div>
+          </div>
+        </div>
+        <div id="bars"></div>
+      </section>
+    </div>
+
+    <footer>
+      <div class="stack-badges">
+        <span class="tag">FastAPI</span>
+        <span class="tag">ONNX Runtime (INT8)</span>
+        <span class="tag">MLflow</span>
+        <span class="tag">GitHub Actions CI</span>
+        <span class="tag">Evidently AI</span>
+      </div>
+      <div class="links">
+        <a href="/docs">API docs</a>
+        ·
+        <a href="https://github.com/Pruthvieraj/Complaint-Intelligence-Platform" target="_blank" rel="noopener">Source on GitHub</a>
+      </div>
+    </footer>
+  </div>
+
+<script>
+  const CATEGORY_COLORS = {
+    "Credit reporting or other personal consumer reports": "#6366f1",
+    "Debt collection": "#ef4444",
+    "Credit card or prepaid card": "#f59e0b",
+    "Checking or savings account": "#10b981",
+    "Mortgage": "#8b5cf6",
+    "Student loan": "#06b6d4",
+    "Vehicle loan or lease": "#ec4899",
+    "Money transfer, virtual currency, or money service": "#84cc16",
+  };
+  const FALLBACK_COLOR = "#6366f1";
+
+  const EXAMPLES = [
+    {
+      label: "Credit report dispute",
+      text: "There is an error on my credit report that I have disputed twice with the bureau and it still has not been corrected. This incorrect account is dragging down my credit score and I cannot get a straight answer from anyone.",
+    },
+    {
+      label: "Debt collector calls",
+      text: "A collection agency keeps calling me multiple times a day about a debt that I already paid off almost two years ago. I have sent them proof of payment and they still won't stop contacting me.",
+    },
+    {
+      label: "Credit card fee",
+      text: "My credit card company charged me a foreign transaction fee even though I never left the country. When I called to dispute it and close the account, they refused to remove the charge.",
+    },
+    {
+      label: "Frozen bank account",
+      text: "My bank froze my checking account without any notice and now I can't access my paycheck that was just deposited. Nobody at the branch can tell me why or when it will be resolved.",
+    },
+  ];
+
+  const textarea = document.getElementById("complaintText");
+  const charcount = document.getElementById("charcount");
+  const submitBtn = document.getElementById("submitBtn");
+  const submitLabel = document.getElementById("submitLabel");
+  const spinner = document.getElementById("spinner");
+  const statusLine = document.getElementById("statusLine");
+  const resultCard = document.getElementById("resultCard");
+  const badge = document.getElementById("badge");
+  const confVal = document.getElementById("confVal");
+  const latVal = document.getElementById("latVal");
+  const bars = document.getElementById("bars");
+  const examplesEl = document.getElementById("examples");
+
+  EXAMPLES.forEach((ex) => {
+    const chip = document.createElement("button");
+    chip.className = "chip";
+    chip.type = "button";
+    chip.textContent = ex.label;
+    chip.addEventListener("click", () => {
+      textarea.value = ex.text;
+      updateCharcount();
+      textarea.focus();
+    });
+    examplesEl.appendChild(chip);
+  });
+
+  function updateCharcount() {
+    charcount.textContent = `${textarea.value.length} / 5000 characters`;
+  }
+  textarea.addEventListener("input", updateCharcount);
+
+  function setLoading(isLoading, message) {
+    submitBtn.disabled = isLoading;
+    spinner.classList.toggle("on", isLoading);
+    submitLabel.textContent = isLoading ? "Classifying..." : "Classify complaint";
+    statusLine.textContent = message || "";
+    statusLine.className = "status-line";
+  }
+
+  function renderResult(data) {
+    const color = CATEGORY_COLORS[data.predicted_category] || FALLBACK_COLOR;
+    badge.style.background = color;
+    badge.textContent = data.predicted_category;
+    confVal.textContent = (data.confidence * 100).toFixed(1) + "%";
+    latVal.textContent = data.latency_ms.toFixed(1) + " ms";
+
+    bars.innerHTML = "";
+    const sorted = [...data.top_k].sort((a, b) => b.probability - a.probability);
+    sorted.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "bar-row";
+
+      const label = document.createElement("div");
+      label.className = "bar-label";
+      label.textContent = item.label;
+
+      const track = document.createElement("div");
+      track.className = "bar-track";
+      const fill = document.createElement("div");
+      fill.className = "bar-fill";
+      fill.style.background = CATEGORY_COLORS[item.label] || FALLBACK_COLOR;
+      track.appendChild(fill);
+
+      const pct = document.createElement("div");
+      pct.className = "bar-pct";
+      pct.textContent = (item.probability * 100).toFixed(1) + "%";
+
+      row.appendChild(label);
+      row.appendChild(track);
+      row.appendChild(pct);
+      bars.appendChild(row);
+
+      requestAnimationFrame(() => {
+        fill.style.width = (item.probability * 100).toFixed(1) + "%";
+      });
+    });
+
+    resultCard.classList.add("show");
+  }
+
+  async function classify() {
+    const text = textarea.value.trim();
+    if (!text) {
+      statusLine.textContent = "Type or paste a complaint first.";
+      statusLine.className = "status-line warn";
+      return;
+    }
+
+    setLoading(true, "Sending to the model...");
+    const slowNotice = setTimeout(() => {
+      statusLine.textContent = "Still waking up — free-tier servers sleep after 15 min idle, first request can take up to ~50s.";
+      statusLine.className = "status-line warn";
+    }, 4000);
+
+    try {
+      const res = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      clearTimeout(slowNotice);
+
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.detail ? JSON.stringify(errBody.detail) : `Request failed (${res.status})`);
+      }
+      const data = await res.json();
+      setLoading(false, "");
+      renderResult(data);
+    } catch (err) {
+      clearTimeout(slowNotice);
+      setLoading(false, "");
+      statusLine.textContent = "Something went wrong: " + err.message;
+      statusLine.className = "status-line bad";
+    }
+  }
+
+  submitBtn.addEventListener("click", classify);
+  textarea.addEventListener("keydown", (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") classify();
+  });
+
+  updateCharcount();
+</script>
+</body>
+</html>
