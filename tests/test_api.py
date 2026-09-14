@@ -81,3 +81,54 @@ def test_model_info_exposes_real_training_numbers(client):
     body = r.json()
     assert body["production_model"]["test_macro_f1"] > body["baseline"]["test_macro_f1"]
     assert body["ci_regression_check"]["overall"] == "PASS"
+
+
+def test_explain_returns_one_importance_score_per_word(client):
+    text = "My mortgage lender keeps reporting late payments to the credit bureau."
+    r = client.post("/explain", json={"text": text})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["method"] == "leave_one_word_out_occlusion"
+    assert "predicted_category" in body
+    assert len(body["words"]) == len(text.split())
+    for w in body["words"]:
+        assert -1.0 <= w["importance_normalized"] <= 1.0
+        assert w["start"] < w["end"]
+
+
+def test_explain_rejects_empty_text(client):
+    r = client.post("/explain", json={"text": ""})
+    assert r.status_code == 422
+
+
+def test_metrics_prometheus_exposes_text_format(client):
+    client.post("/predict", json={"text": "My credit card was charged twice for the same purchase."})
+    r = client.get("/metrics/prometheus")
+    assert r.status_code == 200
+    assert "text/plain" in r.headers["content-type"]
+    assert "complaint_predictions_total" in r.text
+    assert "complaint_http_requests_total" in r.text
+
+
+def test_api_key_not_required_by_default(client, monkeypatch):
+    monkeypatch.delenv("REQUIRE_API_KEY", raising=False)
+    r = client.post("/predict", json={"text": "A collector keeps calling about a debt I already paid."})
+    assert r.status_code == 200
+
+
+def test_api_key_enforced_when_required(client, monkeypatch):
+    monkeypatch.setenv("REQUIRE_API_KEY", "true")
+    monkeypatch.setenv("API_KEY", "secret123")
+    try:
+        r = client.post("/predict", json={"text": "A collector keeps calling about a debt I already paid."})
+        assert r.status_code == 401
+
+        r = client.post(
+            "/predict",
+            json={"text": "A collector keeps calling about a debt I already paid."},
+            headers={"X-API-Key": "secret123"},
+        )
+        assert r.status_code == 200
+    finally:
+        monkeypatch.delenv("REQUIRE_API_KEY", raising=False)
+        monkeypatch.delenv("API_KEY", raising=False)

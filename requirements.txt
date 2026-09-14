@@ -34,8 +34,10 @@ fastapi==0.141.1
 uvicorn[standard]==0.46.0
 pydantic==2.13.3
 
-# --- Monitoring (Phase 6) ---
+# --- Monitoring (Phase 6 drift reports, Phase 8 live metrics) ---
 evidently==0.7.21
+prometheus-client==0.26.0
+redis==5.2.1
 
 # --- Demo UI (Phase 6) ---
 gradio==6.26.0

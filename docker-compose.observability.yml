@@ -1,0 +1,36 @@
+# Phase 8 — local Prometheus + Grafana observability stack.
+#
+# The main docker-compose.yml deliberately stays minimal (it's what
+# Render's Blueprint effectively mirrors for the live deploy — one
+# container, no extra infra). This file is additive: run both together
+# to see the metrics the API already exposes at /metrics/prometheus
+# turned into real dashboards, locally, for screenshots/demo purposes.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.observability.yml up --build
+#
+# Then:
+#   API:        http://localhost:8000
+#   Prometheus: http://localhost:9090
+#   Grafana:    http://localhost:3000  (anonymous viewer access, no login needed)
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - api
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus

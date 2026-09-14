@@ -248,6 +248,7 @@
     <header class="hero">
       <div class="eyebrow-row">
         <div class="eyebrow"><span class="dot"></span> Live model &middot; ONNX INT8</div>
+        <div class="eyebrow">Explainable &middot; rate-limited &middot; auto-retrains</div>
         <a class="eyebrow ci-badge" href="https://github.com/Pruthvieraj/Complaint-Intelligence-Platform/actions" target="_blank" rel="noopener">
           <img src="https://github.com/Pruthvieraj/Complaint-Intelligence-Platform/actions/workflows/ci.yml/badge.svg" alt="CI status" />
         </a>
@@ -314,6 +315,20 @@
               </div>
             </div>
             <div id="bars"></div>
+            <div style="margin-top:18px;">
+              <button class="secondary" id="explainBtn" type="button" style="display:inline-flex; align-items:center; gap:8px;">
+                <span class="spinner" id="explainSpinner"></span>
+                <span>Explain this prediction</span>
+              </button>
+            </div>
+            <div id="explainBox" style="display:none; margin-top:16px;">
+              <p class="card-sub" style="margin-bottom:10px;">
+                Word-level occlusion importance: each word was masked out and re-run through the model one at a time.
+                A brighter highlight means removing that word dropped the model's confidence the most — i.e. that word was doing the most work.
+                Grey means removing it made the model <i>more</i> confident.
+              </p>
+              <div id="explainText" style="line-height: 2.2; font-size: 14.5px; color: var(--text-0);"></div>
+            </div>
           </section>
 
           <section class="card" id="batchResultCard" style="display:none;">
@@ -398,6 +413,18 @@
           <h3>CI regression check</h3>
           <p class="card-sub">Re-scores the committed INT8 model against a fixed 320-row holdout on every push.</p>
           <div class="kv-list" id="ciInfo"></div>
+        </section>
+
+        <section class="card">
+          <h3>Production hardening &amp; automation</h3>
+          <p class="card-sub">What's running behind this page beyond the model itself.</p>
+          <div class="kv-list">
+            <div class="kv-row"><span class="k">Explainability</span><span class="v">Leave-one-word-out occlusion, per prediction &mdash; try "Explain this prediction" on the Classify tab</span></div>
+            <div class="kv-row"><span class="k">Rate limiting</span><span class="v">Per-client fixed window (429 + Retry-After), Redis-backed if configured, in-memory otherwise</span></div>
+            <div class="kv-row"><span class="k">API-key auth</span><span class="v">Toggle-able via env var (off for this public demo) &mdash; <code>REQUIRE_API_KEY</code> / <code>API_KEY</code></span></div>
+            <div class="kv-row"><span class="k">Prometheus metrics</span><span class="v"><a href="/metrics/prometheus" target="_blank" rel="noopener" style="color:var(--accent-2);">/metrics/prometheus</a> &middot; Grafana dashboard via <code>docker-compose.observability.yml</code></span></div>
+            <div class="kv-row"><span class="k">Automated retraining</span><span class="v">Scheduled GitHub Actions job retrains on fresh data and auto-promotes a winning candidate straight to production</span></div>
+          </div>
         </section>
       </div>
     </div>
@@ -541,6 +568,10 @@
 
     resultCard.classList.add("show");
     addToHistory(sourceText, data.predicted_category, data.confidence);
+
+    lastClassifiedText = sourceText;
+    explainBox.style.display = "none";
+    explainText.innerHTML = "";
   }
 
   async function classify() {
@@ -572,6 +603,58 @@
   }
   submitBtn.addEventListener("click", classify);
   textarea.addEventListener("keydown", (e) => { if ((e.metaKey || e.ctrlKey) && e.key === "Enter") classify(); });
+
+  // ---------- Explainability ----------
+  let lastClassifiedText = "";
+  const explainBtn = document.getElementById("explainBtn");
+  const explainSpinner = document.getElementById("explainSpinner");
+  const explainBox = document.getElementById("explainBox");
+  const explainText = document.getElementById("explainText");
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function hexToRgba(hex, alpha) {
+    const h = hex.replace("#", "");
+    const r = parseInt(h.substring(0, 2), 16), g = parseInt(h.substring(2, 4), 16), b = parseInt(h.substring(4, 6), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  function renderExplanation(data, sourceText) {
+    const color = categoryColor(data.predicted_category);
+    const parts = [];
+    let cursor = 0;
+    data.words.forEach((w) => {
+      if (w.start > cursor) parts.push(escapeHtml(sourceText.slice(cursor, w.start)));
+      const norm = w.importance_normalized;
+      const alpha = Math.min(0.85, Math.abs(norm) * 0.85);
+      const bg = norm >= 0 ? hexToRgba(color, alpha) : `rgba(148,163,184,${alpha})`;
+      const word = escapeHtml(sourceText.slice(w.start, w.end));
+      parts.push(`<span style="background:${bg}; border-radius:4px; padding:1px 3px;" title="importance ${norm.toFixed(2)}">${word}</span>`);
+      cursor = w.end;
+    });
+    if (cursor < sourceText.length) parts.push(escapeHtml(sourceText.slice(cursor)));
+    explainText.innerHTML = parts.join("");
+    explainBox.style.display = "";
+  }
+
+  explainBtn.addEventListener("click", async () => {
+    if (!lastClassifiedText) return;
+    explainBtn.disabled = true;
+    explainSpinner.classList.add("on");
+    try {
+      const res = await fetch("/explain", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: lastClassifiedText }) });
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      const data = await res.json();
+      renderExplanation(data, lastClassifiedText);
+    } catch (err) {
+      explainText.innerHTML = `<span style="color:var(--bad);">Could not compute an explanation right now: ${escapeHtml(err.message)}</span>`;
+      explainBox.style.display = "";
+    } finally {
+      explainBtn.disabled = false;
+      explainSpinner.classList.remove("on");
+    }
+  });
 
   // ---------- Classify: mode toggle ----------
   const modeSingleBtn = document.getElementById("modeSingleBtn");
@@ -799,7 +882,11 @@
       logEl.innerHTML = "";
       info.promotion_gate.history.forEach((h) => {
         const div = document.createElement("div"); div.className = "log-entry " + h.decision;
-        div.innerHTML = `<div class="le-top"><span>${h.run_name} (v${h.candidate_version})</span><span style="color:${h.decision === "promoted" ? "#10b981" : "#ef4444"}">${h.decision.toUpperCase()}</span></div><div class="le-reason">macro-F1 ${(h.candidate_test_macro_f1 * 100).toFixed(1)}% — ${h.reason}</div>`;
+        const versionLabel = h.candidate_version != null ? ` (v${h.candidate_version})` : "";
+        const sourceTag = h.source === "automated_retrain"
+          ? ' <span style="color:var(--accent-2); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">auto-retrain</span>'
+          : "";
+        div.innerHTML = `<div class="le-top"><span>${h.run_name}${versionLabel}${sourceTag}</span><span style="color:${h.decision === "promoted" ? "#10b981" : "#ef4444"}">${h.decision.toUpperCase()}</span></div><div class="le-reason">macro-F1 ${(h.candidate_test_macro_f1 * 100).toFixed(1)}% — ${h.reason}</div>`;
         logEl.appendChild(div);
       });
 

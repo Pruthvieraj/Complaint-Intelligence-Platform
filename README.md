@@ -100,6 +100,25 @@ All choices are free-tier / open-source by design.
 
 **Monitoring is scheduled, not streaming.** The Evidently drift report regenerates on demand (or on a cron schedule) against accumulated request logs, rather than running as a live streaming pipeline — which would need infrastructure well beyond what a free-tier portfolio project needs to prove the concept.
 
+## 5. Advanced capabilities (Phase 8 — beyond the original scope)
+
+Everything above was the original 7-phase project scope. On top of it, the live service also runs:
+
+**Explainability.** `src/serving/explain.py` implements leave-one-word-out occlusion — the classifier is re-run once per word with that word masked out, and the drop in the predicted class's probability is that word's importance score. It's a deliberately honest choice for this model: the production model is a plain PyTorch `nn.Module` exported to ONNX, not a HuggingFace model with an attention API to read from, so occlusion needs nothing beyond the classifier that's already loaded, runs as a single batched ONNX call, and is upfront about being a single-feature-ablation method rather than a "real" Shapley-value explanation. Exposed at `POST /explain`; try it via the "Explain this prediction" button on the live demo's Classify tab.
+
+**Observability.** `GET /metrics/prometheus` exposes request counts, per-endpoint latency histograms, and prediction counts by category in Prometheus text-exposition format, alongside (not instead of) the original hand-rolled JSON `/metrics` the dashboard's own UI reads. `docker-compose.observability.yml` adds a local Prometheus + Grafana stack, pre-provisioned with a real dashboard (`monitoring/grafana/provisioning/dashboards/complaint-platform.json`) covering request rate, p95 latency, category distribution, and rate-limit rejections:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.observability.yml up --build
+# API:        http://localhost:8000
+# Prometheus: http://localhost:9090
+# Grafana:    http://localhost:3000  (anonymous viewer access)
+```
+
+**Automated retraining.** `.github/workflows/retrain.yml` runs `src/training/retrain_pipeline.py` on a weekly schedule (and on demand via `workflow_dispatch`): synthesize a fresh batch of "new" complaints → retrain the production architecture on it → run the *exact same* `decide_promotion()` gate CI already enforces on every push → if (and only if) the candidate wins, export it to ONNX, update the committed reports and `model_info.json`, and commit straight to `main`. That push then triggers the existing CI workflow and Render's auto-deploy exactly like a human-authored commit, closing the loop from "new data exists" to "a better model is live" with nobody touching a keyboard. A fresh GitHub Actions checkout has no persisted MLflow registry (`mlflow.db`/`mlruns/` are gitignored on purpose), so this pipeline treats the *committed* `reports/production_model_metrics.json` as the durable source of truth for "what's in production" — the same file CI's own regression check already relies on.
+
+**Serving hardening.** Every request passes through a fixed-window rate limiter (`src/serving/ratelimit.py`, `429` + `Retry-After` on breach; Redis-backed via `REDIS_URL` if set, in-memory per-process otherwise — correct for this project's actual single free-tier Render instance without requiring a Redis deployment just to demo it). API-key auth is implemented and fully wired to `/predict`, `/predict/batch`, and `/explain` but off by default (`REQUIRE_API_KEY=true` + `API_KEY=<secret>` turns it on) so the public demo keeps working with zero configuration. Inference calls run via `asyncio.to_thread` so a burst of concurrent requests can't pile up behind the event loop on CPU-bound ONNX execution.
+
 ## Repo structure
 
 ```
@@ -107,9 +126,11 @@ src/
   data/          acquisition, preprocessing/label-collapsing, EDA, synthetic fallback generator
   baseline/      TF-IDF + LogisticRegression baseline
   training/      sandbox from-scratch transformer (executed) + production HF fine-tune script (Colab-ready)
+                 + retrain_pipeline.py (Phase 8 automated retraining)
   registry/      MLflow registration, promotion gate, CI regression check
   optimization/  ONNX export, dynamic quantization, latency benchmark harness
-  serving/       FastAPI app, shared inference module, request/response schemas
+  serving/       FastAPI app, shared inference module, request/response schemas,
+                 explain.py (occlusion explainability), ratelimit.py (rate limiting)
   monitoring/    Evidently drift report
   demo/          Gradio demo UI
 notebooks/       EDA notebook, Colab fine-tuning notebook
@@ -117,7 +138,10 @@ tests/           unit + API contract tests (run in CI)
 reports/         EDA summary, baseline/benchmark/promotion-log/CI-check JSON+HTML artifacts
 data/            processed splits + committed CI eval subset (raw/processed bulk data gitignored)
 models/onnx/     the committed, promoted, quantized production model
-.github/workflows/ci.yml
+monitoring/      Prometheus scrape config + provisioned Grafana dashboard (Phase 8)
+.github/workflows/ci.yml        tests + regression gate, every push
+.github/workflows/retrain.yml   scheduled automated retraining (Phase 8)
+docker-compose.observability.yml   local Prometheus + Grafana stack (Phase 8)
 ```
 
 ## Quickstart
@@ -137,6 +161,16 @@ curl -X POST localhost:8000/predict -H "Content-Type: application/json" \
 
 # Demo UI:
 python -m src.demo.gradio_app
+
+# Word-level explanation for a prediction (Phase 8):
+curl -X POST localhost:8000/explain -H "Content-Type: application/json" \
+  -d '{"text": "My mortgage servicer keeps reporting late payments even though I paid on time."}'
+
+# Trigger a retrain manually (needs the full requirements.txt, not requirements-serve.txt):
+python -m src.training.retrain_pipeline --n-rows 5000 --epochs 2 --dry-run
+
+# Local Prometheus + Grafana stack (Phase 8):
+docker compose -f docker-compose.yml -f docker-compose.observability.yml up --build
 ```
 
 ## Future work

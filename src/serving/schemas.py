@@ -41,3 +41,22 @@ class BatchPredictItem(PredictResponse):
 class BatchPredictResponse(BaseModel):
     results: list[BatchPredictItem]
     total_latency_ms: float
+
+
+class ExplainRequest(BaseModel):
+    text: ComplaintText
+
+
+class WordImportance(BaseModel):
+    word: str
+    start: int
+    end: int
+    importance: float
+    importance_normalized: float
+
+
+class ExplainResponse(BaseModel):
+    predicted_category: str
+    confidence: float
+    method: str
+    words: list[WordImportance]
